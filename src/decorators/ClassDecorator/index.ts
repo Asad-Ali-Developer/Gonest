@@ -1,3 +1,3 @@
 import { Controller } from "./controller";
 
-export default Controller;
+export { Controller };

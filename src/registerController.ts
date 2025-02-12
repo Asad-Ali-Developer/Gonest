@@ -1,11 +1,15 @@
 import { Express, Request, Response, Router, NextFunction } from "express";
 import "reflect-metadata";
-import { ControllerClass, RouteDefinition } from "./types";
+import { RouteDefinition } from "./types";
 
 let globalPrefix: string = "";
 
 const setApiGlobalPrefix = (prefix: string) => {
     globalPrefix = prefix;
+}
+
+interface ControllerClass {
+    new(): any;
 }
 
 const registerControllers = (app: Express, controllers: ControllerClass[]): void => {

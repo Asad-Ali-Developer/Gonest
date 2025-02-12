@@ -1,4 +1,4 @@
-export type HttpMethod =
+type HttpMethod =
     | "get"
     | "post"
     | "put"
@@ -7,13 +7,12 @@ export type HttpMethod =
     | "options"
     | "head";
 
-export interface RouteDefinition {
+interface RouteDefinition {
     path: string;
     requestMethod: HttpMethod;
     methodName: string;
     middlewares?: Array<(req: any, res: any, next: any) => void>;
 }
 
-export interface ControllerClass {
-    new(): any;
-}
+
+export { HttpMethod, RouteDefinition };
