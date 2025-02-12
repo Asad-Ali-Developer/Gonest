@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Head = exports.Options = exports.Delete = exports.Patch = exports.Put = exports.Post = exports.Get = void 0;
+const route_1 = require("./route");
+Object.defineProperty(exports, "Get", { enumerable: true, get: function () { return route_1.Get; } });
+Object.defineProperty(exports, "Post", { enumerable: true, get: function () { return route_1.Post; } });
+Object.defineProperty(exports, "Put", { enumerable: true, get: function () { return route_1.Put; } });
+Object.defineProperty(exports, "Patch", { enumerable: true, get: function () { return route_1.Patch; } });
+Object.defineProperty(exports, "Delete", { enumerable: true, get: function () { return route_1.Delete; } });
+Object.defineProperty(exports, "Options", { enumerable: true, get: function () { return route_1.Options; } });
+Object.defineProperty(exports, "Head", { enumerable: true, get: function () { return route_1.Head; } });
