@@ -1,22 +1,27 @@
 {
   "name": "nesty-backend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "npm run build"
-  },
+  "description": "Lightweight backend decorators for Express",
   "keywords": [
     "nesty",
     "backend",
-    "light-weight"
+    "express",
+    "decorators",
+    "lightweight"
   ],
   "author": "Nesty",
   "license": "MIT",
-  "description": "Light weight development",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
   "dependencies": {
-    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "reflect-metadata": "^0.2.2"
   },
