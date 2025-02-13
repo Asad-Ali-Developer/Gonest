@@ -1,3 +1,4 @@
-import databaseConnection from "./databaseConnection";
+import { databaseConnection } from "./databaseConnection";
+import { dbSelected } from "./dbSelected";
 
-export { databaseConnection };
+export { databaseConnection, dbSelected };

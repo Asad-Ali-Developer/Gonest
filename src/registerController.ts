@@ -1,18 +1,13 @@
 import { Express, Request, Response, Router, NextFunction } from "express";
 import "reflect-metadata";
 import { RouteDefinition } from "./types";
-
-let globalPrefix: string = "";
-
-const setApiGlobalPrefix = (prefix: string) => {
-    globalPrefix = prefix;
-}
+import { appInstance } from "./utils/ModestAppInstance";
 
 interface ControllerClass {
     new(): any;
 }
 
-const registerControllers = (app: Express, controllers: ControllerClass[]): void => {
+const RegisterControllers = (app: Express, controllers: ControllerClass[]): void => {
     controllers.forEach((ControllerClass) => {
         const controllerInstance = new ControllerClass();
         const prefix: string = Reflect.getMetadata("prefix", ControllerClass) || "";
@@ -32,8 +27,8 @@ const registerControllers = (app: Express, controllers: ControllerClass[]): void
             );
         });
 
-        app.use(`/${globalPrefix}/${prefix}`, router);
+        app.use(`${appInstance.getApiGlobalPrefix}/${prefix}`, router);
     });
 };
 
-export { setApiGlobalPrefix, registerControllers };
+export { RegisterControllers };

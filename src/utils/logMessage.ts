@@ -1,9 +1,11 @@
 import { green, white, yellow } from "colorette";
 import dayjs from "dayjs";
-import { applicationLogs } from "./logs";
+import { appInstance } from "./ModestAppInstance";
 
-const applicationName = applicationLogs.getApplicationName();
-const databaseName = applicationLogs.getApplicationName();
+import { dbSelected } from "../configs";
+
+const databaseName = dbSelected.determinePrimaryDatabase();
+
 
 // Custom logger function to mimic NestJS-style logs
 const logMessage = (message: string, type: string = "LOG") => {
@@ -12,12 +14,12 @@ const logMessage = (message: string, type: string = "LOG") => {
 
   // Format specific parts of the message
   const formattedTimestamp = white(timestamp); // Timestamp in white
-  const formattedPrefix = green(`[${applicationName}] ${pid}`); // Prefix in green
+  const formattedPrefix = green(`[${appInstance.getAppName}] ${pid}`); // Prefix in green
   const formattedType = type === "LOG" ? green(type) : yellow(type); // Log type dynamically colored
 
   // Dynamically generate regex pattern for application name and special keywords
   const highlightPattern = new RegExp(
-    `(\\[RouterExplorer\\]|\\[${databaseName} Connected\\]|\\[${applicationName}\\])`,
+    `(\\[RouterExplorer\\]|\\[${databaseName} Connected\\]|\\[${appInstance.getAppName()}\\])`,
     "g"
   );
 
@@ -32,14 +34,5 @@ const logMessage = (message: string, type: string = "LOG") => {
   // Output the log
   console.log(finalMessage);
 };
-
-if (databaseName) {
-  logMessage(`[${[databaseName]} Connected] ${databaseName} connected successfully!`, "LOG");
-}
-
-if (applicationName) {
-  logMessage(`[${applicationName}] Production-Grade App successfully started`);
-}
-
 
 export default logMessage;

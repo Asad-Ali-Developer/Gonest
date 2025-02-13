@@ -2,25 +2,35 @@ import mongoose from "mongoose";
 import { Pool } from "pg";
 import logMessage from "../utils/logMessage";
 
-class databaseConnection {
-    private postgreSQLConnection!: Pool; // Non-null assertion
+/**
+ * Enum to represent the supported database types.
+ */
+enum DatabaseType {
+    MONGODB = "MongoDB",
+    POSTGRESQL = "PostgreSQL"
+}
 
-    constructor() {}
+class databaseConnection {
+    private postgreSQLConnection?: Pool;
+    private selectedDatabases: Set<DatabaseType> = new Set();
+
+    constructor() { }
 
     /**
      * Connects to a MongoDB database.
      */
     public async connectMongoDB(mongoDB_URI: string) {
         try {
-            const connectionInstance = await mongoose.connect(mongoDB_URI);
-            logMessage("[MongoDB] MongoDB connected successfully!", "LOG");
+            await mongoose.connect(mongoDB_URI);
+            this.selectedDatabases.add(DatabaseType.MONGODB); // Store selection internally
+
+            logMessage(`[${DatabaseType.MONGODB}] Connected successfully!`, "LOG");
 
             mongoose.connection.on("disconnected", () => {
-                logMessage("[MongoDB] Connection lost. Retrying...", "WARN");
+                logMessage(`[${DatabaseType.MONGODB}] Connection lost. Retrying...`, "WARN");
                 this.connectMongoDB(mongoDB_URI);
             });
 
-            return connectionInstance;
         } catch (error) {
             console.error("Error connecting to MongoDB: ", error);
             throw error;
@@ -31,16 +41,26 @@ class databaseConnection {
      * Connects to a PostgreSQL database.
      */
     public async connectPostgreSQL(postgresDB_URI: string) {
-        this.postgreSQLConnection = new Pool({ connectionString: postgresDB_URI }); // Initialized here
         try {
-            const connectionInstance = await this.postgreSQLConnection.connect();
-            logMessage("[PostgreSQL] PostgreSQL connected successfully!", "LOG");
-            return connectionInstance;
+            this.postgreSQLConnection = new Pool({ connectionString: postgresDB_URI });
+            await this.postgreSQLConnection.connect();
+            this.selectedDatabases.add(DatabaseType.POSTGRESQL); // Store selection internally
+
+            logMessage(`[${DatabaseType.POSTGRESQL}] Connected successfully!`, "LOG");
+
         } catch (error) {
             console.error("Error connecting to PostgreSQL: ", error);
             throw error;
         }
     }
+
+    /**
+     * Internal method to retrieve selected databases.
+     * ⚠️ This is protected: Only accessible within this class and its subclasses.
+     */
+    protected getSelectedDatabases(): DatabaseType[] {
+        return Array.from(this.selectedDatabases);
+    }
 }
 
-export default databaseConnection;
+export {databaseConnection, DatabaseType };

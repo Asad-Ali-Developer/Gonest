@@ -4,6 +4,14 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Lightweight backend decorators for Express",
+  "exports": {
+    ".": "./dist/index.js",
+    "./decorators": "./dist/decorators",
+    "./middlewares": "./dist/middlewares",
+    "./utils": "./dist/utils",
+    "./types": "./dist/types",
+    "./app": "./dist/app"
+  },
   "keywords": [
     "nesty",
     "backend",
