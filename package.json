@@ -23,14 +23,19 @@
   },
   "dependencies": {
     "colorette": "^2.0.20",
+    "cors": "^2.8.5",
     "dayjs": "^1.11.13",
     "express": "^4.21.2",
+    "mongoose": "^8.10.0",
+    "pg": "^8.13.3",
     "prettier": "^3.5.0",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.1",
+    "@types/pg": "^8.11.11",
     "typescript": "^5.7.3"
   }
 }
