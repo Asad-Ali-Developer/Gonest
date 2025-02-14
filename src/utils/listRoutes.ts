@@ -2,26 +2,29 @@ import { Express } from "express";
 import logMessage from "./logMessage";
 
 const listAllRoutes = (app: Express): void => {
+  if (!app._router) {
+    console.error("No routes defined yet.");
+    return;
+  }
+
   const routes: { method: string; path: string }[] = [];
 
-  // Iterate all routes
-  app._router.stack.forEach((middleware: any) => {
+  // Iterate over routes safely
+  app._router?.stack.forEach((middleware: any) => {
     if (middleware.route) {
-      // Directly defined routes
       routes.push({
         method: Object.keys(middleware.route.methods)[0].toUpperCase(),
         path: middleware.route.path,
       });
     } else if (middleware.name === "router" && middleware.handle.stack) {
-      // Routes added via router
       const basePath = middleware.regexp
         .toString()
-        .replace(/^\/\^/, "") // Remove leading "/^"
-        .replace(/\\\//g, "/") // Replace escaped slashes
-        .replace(/\?\(\?=\/\|\$\)\//g, "") // Remove "?(?=/|$)"
-        .replace(/\$\//, "") // Remove trailing "$/"
-        .replace(/\/i$/i, "") // Remove trailing "/i" case-insensitively
-        .replace(/^\/maps/, "/maps"); // Ensure /maps stays as is
+        .replace(/^\/\^/, "")
+        .replace(/\\\//g, "/")
+        .replace(/\?\(\?=\/\|\$\)\//g, "")
+        .replace(/\$\//, "")
+        .replace(/\/i$/i, "")
+        .replace(/^\/maps/, "/maps");
 
       middleware.handle.stack.forEach((handler: any) => {
         if (handler.route) {
@@ -34,13 +37,9 @@ const listAllRoutes = (app: Express): void => {
     }
   });
 
-  // Log the routes
-  // logMessage("Mapped routes:", "LOG");
+  // Log all routes
   routes.forEach((route) =>
-    logMessage(
-      `[RouterExplorer] Mapped {${route.path}, ${route.method}} route`,
-      "LOG"
-    )
+    logMessage(`[RouterExplorer] Mapped {${route.path}, ${route.method}} route`, "LOG")
   );
 };
 

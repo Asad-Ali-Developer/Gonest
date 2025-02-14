@@ -1,16 +1,17 @@
 import { Express, Request, Response, Router, NextFunction } from "express";
 import "reflect-metadata";
 import { RouteDefinition } from "./types";
-import { appInstance } from "./utils/ModestAppInstance";
+import { app } from "./core";
 
 interface ControllerClass {
     new(): any;
 }
 
-const RegisterControllers = (app: Express, controllers: ControllerClass[]): void => {
+const RegisterControllers = (appInstance: Express, controllers: ControllerClass[]): void => {
+    const apiPrefix = app.getApiGlobalPrefix()
     controllers.forEach((ControllerClass) => {
         const controllerInstance = new ControllerClass();
-        const prefix: string = Reflect.getMetadata("prefix", ControllerClass) || "";
+        const route: string = Reflect.getMetadata("prefix", ControllerClass) || "";
         const routes: RouteDefinition[] = Reflect.getMetadata("routes", ControllerClass) || [];
 
         const router = Router();
@@ -20,14 +21,14 @@ const RegisterControllers = (app: Express, controllers: ControllerClass[]): void
 
             router[requestMethod](
                 path,
-                ...appliedMiddlewares, // ✅ Apply middleware functions dynamically
+                ...appliedMiddlewares,
                 (req: Request, res: Response, next: NextFunction) => {
                     controllerInstance[methodName](req, res, next);
                 }
             );
         });
 
-        app.use(`${appInstance.getApiGlobalPrefix}/${prefix}`, router);
+        appInstance.use(`/${apiPrefix}/${route}`, router);
     });
 };
 
