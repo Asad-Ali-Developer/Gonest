@@ -1,4 +1,3 @@
-export { RegisterControllers } from "./registerController";
 export * from "./decorators/ClassDecorator";
 export * from "./decorators/MethodDecorator";
 export * from "./decorators/Middlewares";

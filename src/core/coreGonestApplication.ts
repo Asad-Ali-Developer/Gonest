@@ -9,7 +9,7 @@ interface ControllerClass {
     new(): any;
 }
 
-class CoreModestApplication {
+class CoreGonestApplication {
     public app: Express;
     private appName: string = "";
     private appPort: number = 0;
@@ -119,36 +119,36 @@ class CoreModestApplication {
     }
 }
 
-class ModestFactory {
-    private static instance: CoreModestApplication | null = null;
+class GonestFactory {
+    private static instance: CoreGonestApplication | null = null;
 
     private constructor() { } // Prevent instantiation
 
-    public static create(appModule?: { controllers: ControllerClass[], globalPrefix?: string }): CoreModestApplication {
-        if (!ModestFactory.instance) {
-            ModestFactory.instance = new CoreModestApplication();
+    public static create(appModule?: { controllers: ControllerClass[], globalPrefix?: string }): CoreGonestApplication {
+        if (!GonestFactory.instance) {
+            GonestFactory.instance = new CoreGonestApplication();
         }
 
         if (appModule?.globalPrefix) {
-            ModestFactory.instance.setApiGlobalPrefix(appModule.globalPrefix); // ✅ Ensure prefix is set before controllers
+            GonestFactory.instance.setApiGlobalPrefix(appModule.globalPrefix); // ✅ Ensure prefix is set before controllers
         }
 
         if (appModule?.controllers) {
-            ModestFactory.instance.registerControllers(...appModule.controllers);
+            GonestFactory.instance.registerControllers(...appModule.controllers);
         }
 
-        return ModestFactory.instance;
+        return GonestFactory.instance;
     }
 
 
-    public static getInstance(): CoreModestApplication {
-        if (!ModestFactory.instance) {
+    public static getInstance(): CoreGonestApplication {
+        if (!GonestFactory.instance) {
             throw new Error("ModestFactory has not been initialized. Call `ModestFactory.create()` first.");
         }
-        return ModestFactory.instance;
+        return GonestFactory.instance;
     }
 }
 
-const app = ModestFactory.create();
+const app = GonestFactory.create();
 
-export { CoreModestApplication, ModestFactory, app };
+export { CoreGonestApplication, GonestFactory, app };

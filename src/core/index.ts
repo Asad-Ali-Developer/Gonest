@@ -1,3 +1,3 @@
-import { CoreModestApplication, ModestFactory, app } from "./coreModestApplication";
+import { CoreGonestApplication, GonestFactory, app } from "./coreGonestApplication";
 
-export { CoreModestApplication, app, ModestFactory }
+export { CoreGonestApplication, app, GonestFactory }
