@@ -27,19 +27,6 @@ class databaseConnection {
 
             console.log("🚀 Attempting to connect to MongoDB...");
 
-            await mongoose.connect(mongoDB_URI, {
-                connectTimeoutMS: 30000,  // Wait 30s before failing
-                socketTimeoutMS: 30000,
-                serverSelectionTimeoutMS: 30000,
-                maxPoolSize: 50,
-                minPoolSize: 10,
-                bufferCommands: false, // ⬅️ Disable query buffering (forces immediate failure if disconnected)
-                autoIndex: true, // ⬅️ Ensure indexes are created
-            });
-
-            this.selectedDatabases.add(DatabaseType.MONGODB);
-            logMessage(`[${DatabaseType.MONGODB}] Connected successfully!`, "LOG");
-
             mongoose.connection.on("connected", () => {
                 console.log("✅ [MongoDB] Connection established. Ready for queries!");
             });
@@ -53,25 +40,26 @@ class databaseConnection {
                 setTimeout(() => this.connectMongoDB(mongoDB_URI), 5000);
             });
 
-            return new Promise((resolve, reject) => {
-                mongoose.connection.once("open", () => {
-                    console.log("✅ [MongoDB] Database connection is now open!");
-                    resolve(true);
-                });
-
-                mongoose.connection.on("error", (err) => {
-                    console.error("❌ MongoDB failed to connect:", err);
-                    reject(err);
-                });
+            await mongoose.connect(mongoDB_URI, {
+                connectTimeoutMS: 30000,
+                socketTimeoutMS: 30000,
+                serverSelectionTimeoutMS: 30000,
+                maxPoolSize: 50,
+                minPoolSize: 10,
+                bufferCommands: false, //  Keep this as false for production
+                autoIndex: true,
             });
+
+            this.selectedDatabases.add(DatabaseType.MONGODB);
+            logMessage(`[${DatabaseType.MONGODB}] Connected successfully!`, "LOG");
+
+            console.log("✅ [MongoDB] Database connection is now open!");
 
         } catch (error) {
             console.error("❌ Error connecting to MongoDB: ", error);
-            throw error;
+            process.exit(1); // Exit the process on initial connection failure
         }
     }
-
-
 
     /**
      * Connects to a PostgreSQL database.
