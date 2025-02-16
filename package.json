@@ -1,5 +1,5 @@
 {
-  "name": "modest",
+  "name": "gonest",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,10 +19,10 @@
   "files": [
     "dist"
   ],
+  "private": false,
   "scripts": {
     "watch": "tsc --watch",
-    "build": "tsc",
-    "clean": "rm -rf dist",
+    "build": "tsc && dts-bundle-generator --no-check -o dist/index.d.ts src/index.ts",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
@@ -44,6 +44,7 @@
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.1",
     "@types/pg": "^8.11.11",
+    "dts-bundle-generator": "^9.5.1",
     "typescript": "^5.7.3"
   }
 }

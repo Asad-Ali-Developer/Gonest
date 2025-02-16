@@ -1,11 +1,11 @@
-import express, { Express } from "express";
+import cookieParser, { CookieParseOptions } from "cookie-parser";
+import cors, { CorsOptions } from "cors";
+import express, { Express, json, urlencoded } from "express";
+import { Server as HttpServer, createServer } from "http";
+import { Socket, Server as SocketIOServer } from "socket.io";
 import { VitalMiddleware } from "../middlewares";
 import { listAllRoutes } from "../utils";
 import logMessage from "../utils/logMessage";
-import cors, { CorsOptions } from "cors";
-import cookieParser, { CookieParseOptions } from "cookie-parser";
-import { Server as HttpServer, createServer } from "http";
-import { Socket, Server as SocketIOServer } from "socket.io";
 
 interface ControllerClass {
     new(): any;
@@ -33,6 +33,8 @@ class CoreGonestApplication {
     constructor() {
         this.app = express();
         this.middleware = new VitalMiddleware(this.app);
+        this.app.use(json());
+        this.app.use(urlencoded({ extended: true }));
         this.use = this.app.use.bind(this.app);
         this.get = this.app.get.bind(this.app);
         this.post = this.app.post.bind(this.app);
@@ -208,26 +210,25 @@ class GonestFactory {
             GonestFactory.instance = new CoreGonestApplication();
         }
 
+        // 🔹 **Fix: Apply middleware before registering controllers**
+        GonestFactory.instance.app.use(express.json()); // Force JSON parsing globally
+        GonestFactory.instance.app.use(express.urlencoded({ extended: true }));
+
         if (appModule?.globalPrefix) {
             GonestFactory.instance.setApiGlobalPrefix(appModule.globalPrefix);
         }
 
         if (appModule?.controllers) {
             const { RegisterControllers } = require("../registerController");
-            RegisterControllers(GonestFactory.instance.getHttpServer(), appModule.controllers);
+            RegisterControllers(GonestFactory.instance.app, appModule.globalPrefix, appModule.controllers);
         }
 
-        return GonestFactory.instance;
-    }
-
-    public static getInstance(): CoreGonestApplication {
-        if (!GonestFactory.instance) {
-            throw new Error("GonestFactory has not been initialized. Call `GonestFactory.create()` first.");
-        }
         return GonestFactory.instance;
     }
 }
 
+
 const app = GonestFactory.create();
 
 export { CoreGonestApplication, GonestFactory, app };
+

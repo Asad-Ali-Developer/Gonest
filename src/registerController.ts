@@ -1,15 +1,12 @@
 import { Express, Request, Response, Router, NextFunction } from "express";
 import "reflect-metadata";
 import { RouteDefinition } from "./types";
-import { app } from "./core";
 
 interface ControllerClass {
     new(): any;
 }
 
-const RegisterControllers = (appInstance: Express, controllers: ControllerClass[]): void => {
-    const apiPrefix = app.getApiGlobalPrefix() || ""; 
-
+const RegisterControllers = (appInstance: Express, apiGlobalPrefix: string, controllers: ControllerClass[]): void => {
     controllers.forEach((ControllerClass) => {
         const controllerInstance = new ControllerClass();
         const routePrefix: string = Reflect.getMetadata("prefix", ControllerClass) || "";
@@ -18,27 +15,25 @@ const RegisterControllers = (appInstance: Express, controllers: ControllerClass[
         const router = Router();
 
         routes.forEach(({ path, requestMethod, methodName, middlewares }) => {
-            const appliedMiddlewares = middlewares ?? [];
-            const fullPath = `/${apiPrefix}/${routePrefix}/${path}`; // Construct full path
+            const appliedMiddlewares = middlewares && middlewares.length > 0 ? middlewares : [];
+            const fullPath = `/${apiGlobalPrefix}/${routePrefix}/${path}`;
 
             router[requestMethod](
-                path, // Use the path directly on the router
-                ...appliedMiddlewares,
-                async (req: Request, res: Response, next: NextFunction) => {  // Make this async
+                path,
+                ...appliedMiddlewares, // Apply middlewares only if they exist
+                async (req: Request, res: Response, next: NextFunction) => {
                     try {
-                        // Crucial: Bind 'this' and await the controller method
                         const boundHandler = controllerInstance[methodName].bind(controllerInstance);
                         await boundHandler(req, res, next);
                     } catch (error) {
                         console.error(`Error in route handler for ${fullPath}:`, error);
-                        next(error); // Pass error to Express error handler
+                        next(error);
                     }
                 }
             );
         });
 
-        appInstance.use(`/${apiPrefix}/${routePrefix}`, router); // Use the router with prefix
-        console.log(`Registered routes for /${apiPrefix}/${routePrefix}`); // Log route registration
+        appInstance.use(`/${apiGlobalPrefix}/${routePrefix}`, router);
     });
 };
 

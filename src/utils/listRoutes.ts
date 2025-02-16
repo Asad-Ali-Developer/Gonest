@@ -3,7 +3,7 @@ import logMessage from "./logMessage";
 
 const listAllRoutes = (app: Express): void => {
   if (!app._router) {
-    console.error("No routes defined yet.");
+    console.error("⚠ No routes defined yet.");
     return;
   }
 
