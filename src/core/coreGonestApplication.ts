@@ -1,10 +1,11 @@
 import cookieParser, { CookieParseOptions } from "cookie-parser";
 import cors, { CorsOptions } from "cors";
-import express, { Express, json, urlencoded } from "express";
+import express, { ErrorRequestHandler, Express, json, urlencoded } from "express";
 import { Server as HttpServer, createServer } from "http";
 import { Socket, Server as SocketIOServer } from "socket.io";
 import { listAllRoutes } from "../utils";
 import { logMessage } from "../utils";
+import { exceptionHandler } from "../middlewares";
 class CoreGonestApplication {
     public app: Express;
     private appName: string = "";
@@ -28,6 +29,7 @@ class CoreGonestApplication {
         this.app.use(json());
         this.app.use(urlencoded({ extended: true }));
         this.app.use(cookieParser());
+        this.app.use(exceptionHandler as ErrorRequestHandler)
         this.use = this.app.use.bind(this.app);
         this.get = this.app.get.bind(this.app);
         this.post = this.app.post.bind(this.app);
