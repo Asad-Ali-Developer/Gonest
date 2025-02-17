@@ -4,7 +4,7 @@ import express, { Express, json, urlencoded } from "express";
 import { Server as HttpServer, createServer } from "http";
 import { Socket, Server as SocketIOServer } from "socket.io";
 import { listAllRoutes } from "../utils";
-import logMessage from "../utils/logMessage";
+import { logMessage } from "../utils";
 class CoreGonestApplication {
     public app: Express;
     private appName: string = "";
@@ -76,7 +76,7 @@ class CoreGonestApplication {
      */
     public setApiGlobalPrefix(prefix: string): void {
         if (prefix.startsWith("/")) {
-            logMessage("API global prefix must not start with a '/'", "ERROR")
+            logMessage("API global prefix must not start with '/'", "ERROR")
         }
         this.apiGlobalPrefix = prefix;
     }
