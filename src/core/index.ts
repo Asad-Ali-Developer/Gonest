@@ -1,3 +1,4 @@
-import { CoreGonestApplication, GonestFactory, app } from "./coreGonestApplication";
+import { CoreGonestApplication } from "./coreGonestApplication";
+import { GonestFactory, app } from "./gonestFactory";
 
-export { CoreGonestApplication, app, GonestFactory }
+export { CoreGonestApplication, GonestFactory, app };

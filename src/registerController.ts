@@ -1,6 +1,7 @@
 import { Express, Request, Response, Router, NextFunction } from "express";
 import "reflect-metadata";
 import { RouteDefinition } from "./types";
+import logMessage from "./utils/logMessage";
 
 interface ControllerClass {
     new(): any;
@@ -26,6 +27,7 @@ const RegisterControllers = (appInstance: Express, apiGlobalPrefix: string, cont
                         const boundHandler = controllerInstance[methodName].bind(controllerInstance);
                         await boundHandler(req, res, next);
                     } catch (error) {
+                        logMessage(`Error in route handler for ${fullPath}:`, "ERROR");
                         console.error(`Error in route handler for ${fullPath}:`, error);
                         next(error);
                     }

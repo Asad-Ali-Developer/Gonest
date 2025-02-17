@@ -70,7 +70,7 @@ class CoreGonestApplication {
     public listen(port: number, cb?: () => void): void {
         this.appPort = port;
         this.app.listen(port, () => {
-            logMessage(`[${this.appName || "GonestApp"}] Server started on port ${port}`, "LOG");
+            logMessage(`[${this.appName || "GonestApp"}] Server started on port ${port}`, "LOG", port);
             if (cb) cb();
         });
     }
@@ -81,7 +81,7 @@ class CoreGonestApplication {
      */
     public setApiGlobalPrefix(prefix: string): void {
         if (prefix.startsWith("/")) {
-            throw new Error("API global prefix must not start with a '/'");
+            logMessage("API global prefix must not start with a '/'", "ERROR")
         }
         this.apiGlobalPrefix = prefix;
     }
@@ -99,7 +99,7 @@ class CoreGonestApplication {
      */
     public setApplicationName(name: string): void {
         this.appName = name;
-        logMessage(`[${this.appName}] Application successfully started`, "LOG");
+        logMessage(`[${this.appName}] Application successfully started`, "START");
     }
 
 
@@ -115,7 +115,7 @@ class CoreGonestApplication {
      */
     public listAllRoutes(): void {
         if (!this.app._router) {
-            console.warn("⚠ No routes registered yet.");
+            logMessage("No routes registered", "ROUTE");
             return;
         }
         listAllRoutes(this.app);
@@ -135,12 +135,22 @@ class CoreGonestApplication {
     }
 
     /**
-     * Configures and enables cookie parsing middleware.
-     * @param secret Optional secret key(s) for signing cookies.
-     * @param options Additional cookie parsing options.
-     * @returns The current instance of `CoreGonestApplication` for method chaining.
-     */
-    public cookieParser(secret?: string | string[], options?: CookieParseOptions): this {
+      * Configures and enables JSON parsing middleware for incoming requests.
+      * @param options Optional configuration for the JSON parsing middleware.
+      * @returns The current instance of `CoreGonestApplication` for method chaining.
+      */
+    public enableJsonParsing(options?: { limit?: string; strict?: boolean; type?: string }): this {
+        this.app.use(json(options));
+        return this;  // Enables method chaining
+    }
+
+    /**
+      * Configures and enables cookie parsing middleware.
+      * @param secret Optional secret key(s) for signing cookies.
+      * @param options Additional cookie parsing options.
+      * @returns The current instance of `CoreGonestApplication` for method chaining.
+      */
+    public enableCookieParser(secret?: string | string[], options?: CookieParseOptions): this {
         this.app.use(cookieParser(secret, options));
         return this;
     }
@@ -190,7 +200,7 @@ class CoreGonestApplication {
             this.io = new SocketIOServer<T>(server, { cors: corsOptions });
 
             this.io.on("connection", (clientSocket: Socket<T>) => {
-                console.log(`🔌 Client connected: ${clientSocket.id}`);
+                logMessage(`🔌 Client connected: ${clientSocket.id}`, "SUCCESS")
 
                 // Register event handlers if provided
                 if (eventHandlers) {
@@ -202,7 +212,7 @@ class CoreGonestApplication {
                 });
             });
 
-            console.log("✅ WebSocket server initialized");
+            logMessage("✅ WebSocket server initialized", "SUCCESS");
         }
 
         return this.io;
@@ -218,34 +228,4 @@ class CoreGonestApplication {
     }
 }
 
-class GonestFactory {
-    private static instance: CoreGonestApplication | null = null;
-
-    private constructor() { } // Prevent instantiation
-
-    public static create(appModule?: { controllers: ControllerClass[], globalPrefix?: string }): CoreGonestApplication {
-        if (!GonestFactory.instance) {
-            GonestFactory.instance = new CoreGonestApplication();
-        }
-        
-        GonestFactory.instance.app.use(express.json()); // Force JSON parsing globally
-        GonestFactory.instance.app.use(express.urlencoded({ extended: true }));
-
-        if (appModule?.globalPrefix) {
-            GonestFactory.instance.setApiGlobalPrefix(appModule.globalPrefix);
-        }
-
-        if (appModule?.controllers) {
-            const { RegisterControllers } = require("../registerController");
-            RegisterControllers(GonestFactory.instance.app, appModule.globalPrefix, appModule.controllers);
-        }
-
-        return GonestFactory.instance;
-    }
-}
-
-
-const app = GonestFactory.create();
-
-export { CoreGonestApplication, GonestFactory, app };
-
+export { CoreGonestApplication };

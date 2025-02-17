@@ -26,15 +26,20 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.17.0",
+    "@supabase/supabase-js": "^2.48.1",
     "colorette": "^2.0.20",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dayjs": "^1.11.13",
     "express": "^4.21.2",
+    "firebase-admin": "^13.1.0",
+    "ioredis": "^5.5.0",
     "mongoose": "^8.10.0",
     "pg": "^8.13.3",
     "prettier": "^3.5.0",
     "reflect-metadata": "^0.2.2",
+    "sequelize": "^6.37.5",
     "socket.io": "^4.8.1",
     "tsc-watch": "^6.2.1"
   },

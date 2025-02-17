@@ -39,7 +39,7 @@ const listAllRoutes = (app: Express): void => {
 
   // Log all routes
   routes.forEach((route) =>
-    logMessage(`[RouterExplorer] Mapped {${route.path}, ${route.method}} route`, "LOG")
+    logMessage(`[RouterExplorer] Mapped {${route.path}, ${route.method}} route`, "ROUTE")
   );
 };
 
