@@ -3,7 +3,6 @@ import cors, { CorsOptions } from "cors";
 import express, { Express, json, urlencoded } from "express";
 import { Server as HttpServer, createServer } from "http";
 import { Socket, Server as SocketIOServer } from "socket.io";
-import { VitalMiddleware } from "../middlewares";
 import { listAllRoutes } from "../utils";
 import logMessage from "../utils/logMessage";
 
@@ -18,7 +17,6 @@ class CoreGonestApplication {
     private apiGlobalPrefix: string = "";
     private httpServer: HttpServer | null = null;
     private io: SocketIOServer | null = null;
-    public middleware: VitalMiddleware;
     public use;
     public get;
     public post;
@@ -32,9 +30,9 @@ class CoreGonestApplication {
 
     constructor() {
         this.app = express();
-        this.middleware = new VitalMiddleware(this.app);
         this.app.use(json());
         this.app.use(urlencoded({ extended: true }));
+        this.app.use(cookieParser());
         this.use = this.app.use.bind(this.app);
         this.get = this.app.get.bind(this.app);
         this.post = this.app.post.bind(this.app);
@@ -142,8 +140,28 @@ class CoreGonestApplication {
      * @param options Additional cookie parsing options.
      * @returns The current instance of `CoreGonestApplication` for method chaining.
      */
-    public cookieParser(secret?: string | string[], options?: CookieParseOptions) {
+    public cookieParser(secret?: string | string[], options?: CookieParseOptions): this {
         this.app.use(cookieParser(secret, options));
+        return this;
+    }
+
+    /**
+      * Enables URL-encoded body parsing for incoming requests.
+      * @param options Optional configuration for URL-encoded body parsing.
+      * @returns The current instance of `VitalMiddleware` for method chaining.
+      */
+    public urlEncodedParser(options?: { extended: boolean }): this {
+        this.app.use(urlencoded(options || { extended: true }));
+        return this;
+    }
+
+    /**
+     * Serves static files from the specified folder.
+     * @param folder The directory path to serve static files from.
+     * @returns The current instance of `VitalMiddleware` for method chaining.
+     */
+    public setStaticFolder(folder: string): this {
+        this.app.use(express.static(folder));
         return this;
     }
 
@@ -209,8 +227,7 @@ class GonestFactory {
         if (!GonestFactory.instance) {
             GonestFactory.instance = new CoreGonestApplication();
         }
-
-        // 🔹 **Fix: Apply middleware before registering controllers**
+        
         GonestFactory.instance.app.use(express.json()); // Force JSON parsing globally
         GonestFactory.instance.app.use(express.urlencoded({ extended: true }));
 
