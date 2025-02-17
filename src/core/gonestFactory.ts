@@ -5,25 +5,44 @@ interface ControllerClass {
     new(): any;
 }
 
+/**
+ * Factory class responsible for creating and managing a singleton instance of `CoreGonestApplication`.
+ * This ensures a single instance of the application is used across the system.
+ */
 class GonestFactory {
     private static instance: CoreGonestApplication | null = null;
 
-    private constructor() { } // Prevent instantiation
+    /**
+     * Private constructor to prevent direct instantiation.
+     */
+    private constructor() { }
 
+    /**
+     * Creates or retrieves the singleton instance of `CoreGonestApplication`.
+     * It also configures global middleware, API prefix, and registers controllers.
+     *
+     * @param appModule Optional configuration object containing controllers and a global prefix.
+     * @param appModule.controllers An array of controller classes to register.
+     * @param appModule.globalPrefix A string representing the global API prefix.
+     * @returns The singleton instance of `CoreGonestApplication`.
+     */
     public static create(appModule?: { controllers: ControllerClass[], globalPrefix?: string }): CoreGonestApplication {
         if (!GonestFactory.instance) {
             GonestFactory.instance = new CoreGonestApplication();
         }
 
-        GonestFactory.instance.app.use(express.json()); // Force JSON parsing globally
+        // Apply global middleware for JSON and URL-encoded data parsing
+        GonestFactory.instance.app.use(express.json()); 
         GonestFactory.instance.app.use(express.urlencoded({ extended: true }));
 
+        // Set global API prefix if provided
         if (appModule?.globalPrefix) {
             GonestFactory.instance.setApiGlobalPrefix(appModule.globalPrefix);
         }
 
+        // Register controllers if provided
         if (appModule?.controllers) {
-            const { RegisterControllers } = require("../registerController");
+            const { RegisterControllers } = require("../utils/registerController");
             RegisterControllers(GonestFactory.instance.app, appModule.globalPrefix, appModule.controllers);
         }
 
@@ -31,6 +50,7 @@ class GonestFactory {
     }
 }
 
+// Create a singleton instance of the application
 const app = GonestFactory.create();
 
 export { GonestFactory, app };

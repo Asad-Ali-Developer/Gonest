@@ -1,5 +1,5 @@
-import { applicationLogs } from "./logs";
-import listAllRoutes from "./listRoutes";
 import { logConnectedDatabases } from "./autoDetectDB";
+import listAllRoutes from "./listRoutes";
+import { RegisterControllers } from "./registerController";
 
-export { applicationLogs, listAllRoutes, logConnectedDatabases };
+export { listAllRoutes, logConnectedDatabases, RegisterControllers };

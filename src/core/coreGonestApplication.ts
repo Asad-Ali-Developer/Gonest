@@ -5,11 +5,6 @@ import { Server as HttpServer, createServer } from "http";
 import { Socket, Server as SocketIOServer } from "socket.io";
 import { listAllRoutes } from "../utils";
 import logMessage from "../utils/logMessage";
-
-interface ControllerClass {
-    new(): any;
-}
-
 class CoreGonestApplication {
     public app: Express;
     private appName: string = "";
