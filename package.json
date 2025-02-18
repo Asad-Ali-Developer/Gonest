@@ -1,6 +1,6 @@
 {
   "name": "gonest",
-  "version": "1.0.2",
+  "version": "1.0.21",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Lightweight backend decorators for Express",
@@ -28,7 +28,6 @@
     "watch": "tsc --watch",
     "build": "tsc && dts-bundle-generator --no-check -o dist/index.d.ts src/index.ts",
     "prepublishOnly": "npm run build",
-    "postinstall": "ts-node-dev --clear --respawn --transpile-only --watch src src/index.ts",
     "dev": "ts-node-dev --clear --respawn --transpile-only --watch src src/index.ts"
   },
   "peerDependencies": {
