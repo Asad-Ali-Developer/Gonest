@@ -1,5 +1,4 @@
 import { CoreGonestApplication } from "./coreGonestApplication";
-import express from "express";
 
 interface ControllerClass {
     new(): any;
@@ -31,11 +30,7 @@ class GonestFactory {
             GonestFactory.instance = new CoreGonestApplication();
         }
 
-        // Apply global middleware for JSON and URL-encoded data parsing
-        GonestFactory.instance.app.use(express.json()); 
-        GonestFactory.instance.app.use(express.urlencoded({ extended: true }));
-
-        // Set global API prefix if provided
+        // Apply global API prefix if provided
         if (appModule?.globalPrefix) {
             GonestFactory.instance.setApiGlobalPrefix(appModule.globalPrefix);
         }
@@ -46,11 +41,11 @@ class GonestFactory {
             RegisterControllers(GonestFactory.instance.app, appModule.globalPrefix, appModule.controllers);
         }
 
-        return GonestFactory.instance;
+        return GonestFactory.instance;  // Return the singleton instance
     }
 }
 
 // Create a singleton instance of the application
 const app = GonestFactory.create();
 
-export { GonestFactory, app };
+export { app, GonestFactory };
