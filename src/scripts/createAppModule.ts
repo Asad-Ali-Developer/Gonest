@@ -1,55 +1,56 @@
-import fs from "fs";
-import path from "path";
+import * as fs from "fs";
+import * as path from "path";
 import { logMessage } from "../utils";
 
 /**
- * Creates or modifies the appModule file for the user, depending on their environment.
- * If the file doesn't exist, it will be created with the necessary content.
- * 
- * @param extension The file extension for the module (either '.ts' or '.js').
- * @throws Will throw an error if the file creation or modification fails.
+ * Detects the correct root directory of the project using `gonest`.
+ * Ensures `appModule.ts` is created in the actual project using `gonest`.
+ * @returns The absolute path of the project using the package.
  */
-function createAppModule(extension: '.ts' | '.js'): void {
-    // Path to the appModule (either appModule.ts or appModule.js)
-    const appModulePath = path.join(process.cwd(), `appModule${extension}`);
-
-    // Check if the file already exists
-    if (fs.existsSync(appModulePath)) {
-        console.log(`${appModulePath} already exists.`);
-        return;
-    }
-
-    // Define the content for the appModule file
-    const moduleContent = `
-  import { GonestFactory } from "gonest";
-  
-  /**
-   * Creates an instance of the application using GonestFactory.
-   * This function sets up the app with the specified controllers and global prefix.
-   *
-   * @returns The created app instance.
-   */
-  export function Invest() {
-      // Create an app instance using GonestFactory
-      const instance = GonestFactory.create({
-          controllers: [], // Add controllers here
-          globalPrefix: 'api' // Modify the global prefix as needed
-      });
-  
-      // Return the created app instance
-      return instance;
+function getProjectRoot(): string {
+  try {
+    // This finds gonest in the node_modules of the *actual project*
+    const gonestPackagePath = require.resolve("gonest/package.json");
+    // Move up twice from .../node_modules/gonest/package.json to get the real project
+    return path.join(path.dirname(gonestPackagePath), "../../");
+  } catch (error) {
+    // Fallback if for some reason it can't find gonest
+    console.error("❌ Could not determine project root. Using process.cwd() as fallback.");
+    return process.cwd();
   }
-  
-  // Create the app instance and export it directly
-  export const app = Invest();
-  `;
-
-    // Write the content to the file
-    try {
-        fs.writeFileSync(appModulePath, moduleContent.trim(), 'utf-8');
-        logMessage(`Created ${appModulePath} successfully.`, "SUCCESS");
-    } catch (error: any) {
-        logMessage(`Failed to create appModule file: ${error}`, "ERROR")
-    }
 }
-export default createAppModule;
+
+/**
+ * Creates `appModule.ts` in the correct project directory.
+ * @param fileExtension The file extension (".ts" or ".js").
+ */
+export default function createAppModule(fileExtension: ".ts" | ".js"): void {
+  const projectRoot = getProjectRoot();
+  const appModulePath = path.join(projectRoot, `appModule${fileExtension}`);
+
+  if (fs.existsSync(appModulePath)) {
+    logMessage(`⚠️ ${appModulePath} already exists.`, "WARN");
+    return;
+  }
+
+  const moduleContent = `
+import { GonestFactory } from "gonest";
+
+export function Invest() {
+    const instance = GonestFactory.create({
+        controllers: [],
+        globalPrefix: "api",
+    });
+    return instance;
+}
+
+export const app = Invest();
+`;
+
+  try {
+    fs.writeFileSync(appModulePath, moduleContent.trim(), "utf-8");
+    logMessage(`✅ Created ${appModulePath} successfully.`, "SUCCESS");
+  } catch (error: any) {
+    logMessage(`❌ Failed to create appModule file: ${error}`, "ERROR");
+  }
+}

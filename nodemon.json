@@ -1,8 +1,0 @@
-{
-    "quiet": true,
-    "verbose": false,
-    "stderr": false, 
-    "watch": ["src"],
-    "ignore": ["*.test.js", "*.spec.js"]
-  }
-  

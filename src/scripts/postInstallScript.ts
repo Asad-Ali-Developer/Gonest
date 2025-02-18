@@ -1,59 +1,120 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { logMessage } from '../utils';
-import createAppModule from './createAppModule';
+/**
+ * postInstallScript.ts
+ *
+ * When a user installs your package (`npm i gonest`), this script will:
+ *  1. Determine the consumer project’s root directory.
+ *  2. Add a "dev" script to the consumer’s package.json if it does not exist.
+ *  3. Create an "appModule.ts" file in the consumer project root that registers controllers
+ *     and returns the app instance using GonestFactory.
+ */
+
+import * as fs from "fs";
+import * as path from "path";
+import { logMessage } from "../utils";
 
 /**
- * Adds a 'dev' script to the user's package.json if it doesn't already exist.
- * Ensures that the 'scripts' section is present and adds the `dev` script
- * for using `ts-node-dev` to run the application in development mode.
+ * Determines the consumer project's root directory.
+ * It uses require.resolve("gonest/package.json") to locate gonest inside the consumer's node_modules,
+ * then moves up two directories to reach the consumer project's root.
  *
- * @throws Will throw an error if package.json cannot be read or updated.
+ * @returns The absolute path of the consumer project.
  */
-export function addDevScriptToPackageJson(): void {
-  // Path to the user's package.json (assuming it is at the root of their project)
-  const packageJsonPath: string = path.join(process.cwd(), 'package.json');
+function getProjectRoot(): string {
+  try {
+    // This will resolve to something like: /path/to/consumer/node_modules/gonest/package.json
+    const gonestPackagePath = require.resolve("gonest/package.json");
+    // Move two directories up:
+    // 1st up: from /path/to/consumer/node_modules/gonest to /path/to/consumer/node_modules
+    // 2nd up: from /path/to/consumer/node_modules to /path/to/consumer
+    return path.join(path.dirname(gonestPackagePath), "../../");
+  } catch (error) {
+    console.error("❌ Could not determine project root. Using process.cwd() as fallback.");
+    return process.cwd();
+  }
+}
+
+/**
+ * Adds a "dev" script to the consumer's package.json if it doesn't already exist.
+ * This script uses ts-node-dev to run the application in development mode.
+ */
+function addDevScriptToPackageJson(): void {
+  const projectRoot = getProjectRoot();
+  const packageJsonPath = path.join(projectRoot, "package.json");
 
   try {
-    // Load and parse the user's package.json
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
-    // Ensure the 'scripts' field exists, if not, create it
     if (!packageJson.scripts) {
       packageJson.scripts = {};
     }
 
-    // Add the 'dev' script if it doesn't exist
     if (!packageJson.scripts.dev) {
-      packageJson.scripts.dev = 'ts-node-dev --clear --respawn --transpile-only --watch src src/index.ts';
+      packageJson.scripts.dev =
+        "ts-node-dev --clear --respawn --transpile-only --watch src src/index.ts";
+      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+      logMessage("✅ Added 'dev' script to package.json", "SUCCESS");
+    } else {
+      logMessage("⚠️ 'dev' script already exists in package.json", "WARN");
     }
-
-    // Write the updated package.json back to disk
-    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-    logMessage("Added 'dev' script to package.json", "SUCCESS");
-
   } catch (error: any) {
-    // Handle any errors that occur during the file read/write process
-
-    logMessage(`Failed to update package.json: ${error}`, "ERROR");
+    logMessage(`❌ Failed to update package.json: ${error}`, "ERROR");
   }
 }
 
-// Call the function to add the dev script when this script is executed
-addDevScriptToPackageJson();
+/**
+ * Creates the "appModule.ts" file in the consumer project's root.
+ * This file imports GonestFactory from "gonest", registers controllers, sets a global prefix,
+ * and exports the created app instance.
+ *
+ * @param fileExtension The file extension to use (".ts" by default or ".js" if "--js" flag is present).
+ */
+function createAppModule(fileExtension: ".ts" | ".js"): void {
+  const projectRoot = getProjectRoot();
+  const appModulePath = path.join(projectRoot, `appModule${fileExtension}`);
 
+  if (fs.existsSync(appModulePath)) {
+    logMessage(`⚠️ ${appModulePath} already exists.`, "WARN");
+    return;
+  }
 
-//<-------------------------------------------------------------------------------->
+  const moduleContent = `
+import { GonestFactory } from "gonest";
 
 /**
- * This is the main function that runs when the script is executed.
- * It checks if TypeScript or JavaScript should be used and creates the respective file.
+ * Creates an instance of the application using GonestFactory.
+ * Registers controllers and sets the global prefix.
+ *
+ * @returns The created app instance.
  */
- export function createAppModuleIfNeeded(): void {
-    const fileExtension: '.ts' | '.js' = process.argv.includes('--js') ? '.js' : '.ts';
-    createAppModule(fileExtension);
+export function Invest() {
+    const instance = GonestFactory.create({
+        controllers: [], // Add controllers as needed
+        globalPrefix: "api" // Modify the global prefix if required
+    });
+    return instance;
 }
 
-// Call the function to create the app module
-createAppModuleIfNeeded();
+// Export the app instance
+export const app = Invest();
+`;
 
+  try {
+    fs.writeFileSync(appModulePath, moduleContent.trim(), "utf-8");
+    logMessage(`✅ Created ${appModulePath} successfully.`, "SUCCESS");
+  } catch (error: any) {
+    logMessage(`❌ Failed to create appModule file: ${error}`, "ERROR");
+  }
+}
+
+/**
+ * Determines which file extension to use based on the presence of "--js" in process.argv,
+ * then creates the app module accordingly.
+ */
+function createAppModuleIfNeeded(): void {
+  const fileExtension: ".ts" | ".js" = process.argv.includes("--js") ? ".js" : ".ts";
+  createAppModule(fileExtension);
+}
+
+// Execute both steps:
+addDevScriptToPackageJson();
+createAppModuleIfNeeded();

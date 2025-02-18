@@ -1,3 +1,3 @@
-import { addDevScriptToPackageJson, createAppModuleIfNeeded } from "./postInstallScript";
+// import { addDevScriptToPackageJson, createAppModuleIfNeeded } from "./postInstallScript";
 
-export { addDevScriptToPackageJson, createAppModuleIfNeeded };
+// export { addDevScriptToPackageJson, createAppModuleIfNeeded };
