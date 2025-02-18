@@ -31,7 +31,6 @@ Install Gonest via npm:
 npm install gonest
 ```
 
-
 Install Gonest via yarn:
 
 ```bash
@@ -146,15 +145,12 @@ import { GonestFactory } from "gonest";
 const app = GonestFactory.create();
 
 // Initialize WebSocket server
-app.connectSocket(
-  { origin: "https://example.com" },
-  (socket) => {
-    socket.on("message", (data) => {
-      console.log("Received message:", data);
-      socket.emit("response", "Message received");
-    });
-  }
-);
+app.connectSocket({ origin: "https://example.com" }, (socket) => {
+  socket.on("message", (data) => {
+    console.log("Received message:", data);
+    socket.emit("response", "Message received");
+  });
+});
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
@@ -206,9 +202,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## ⭐ Show Your Support
 
-If you like this project, give it a ⭐ on [GitHub](https://github.com/your-username/gonest)!
+If you like this project, give it a ⭐ on [GitHub](https://github.com/Asad-Ali-Developer/Gonest.git)!
 
 ---
 
 For detailed examples and advanced usage, check out the [documentation](https://www.npmjs.com/package/gonest).
-
