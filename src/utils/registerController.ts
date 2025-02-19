@@ -16,18 +16,22 @@ const RegisterControllers = (appInstance: Express, apiGlobalPrefix: string, cont
         const routePrefix: string = Reflect.getMetadata("prefix", ControllerClass) || "";
         const routes: RouteDefinition[] = Reflect.getMetadata("routes", ControllerClass) || [];
 
+        const controllerPath = `/${apiGlobalPrefix}/${routePrefix}`;
+
         const router = Router();
 
         routes.forEach(({ path, requestMethod, methodName, middlewares }) => {
-            // Make sure requestMethod is a valid HttpMethod type and is defined
+            // Ensure the requestMethod is valid
             if (!requestMethod || !isValidHttpMethod(requestMethod)) {
-                throw new Error(`Invalid or undefined HTTP method for route handler: ${methodName}`);
+                logMessage(`Invalid HTTP method for route: ${methodName}`, "ERROR");
+                return;
             }
 
             const appliedMiddlewares = middlewares && middlewares.length > 0 ? middlewares : [];
-            const fullPath = `/${apiGlobalPrefix}/${routePrefix}/${path}`;
+            const fullPath = `${controllerPath}/${path}`;
 
-            // Apply route method with dynamic access using a valid HttpMethod
+            // logMessage(`Registering route: ${requestMethod.toUpperCase()!} ${fullPath}`, "ROUTE");
+
             router[requestMethod as HttpMethod](
                 path,
                 ...appliedMiddlewares, // Apply middleware functions
@@ -37,16 +41,16 @@ const RegisterControllers = (appInstance: Express, apiGlobalPrefix: string, cont
                         await boundHandler(req, res, next);
                     } catch (error) {
                         logMessage(`Error in route handler for ${fullPath}:`, "ERROR");
-                        console.error(`Error in route handler for ${fullPath}:`, error);
                         next(error);
                     }
                 }
             );
         });
 
-        appInstance.use(`/${apiGlobalPrefix}/${routePrefix}`, router);
+        appInstance.use(controllerPath, router);
     });
 };
+
 
 /**
  * Helper function to check if a method is a valid HTTP method.

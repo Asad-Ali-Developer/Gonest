@@ -1,11 +1,15 @@
 {
   "name": "gonest",
-  "version": "1.0.0",
+  "version": "1.0.21",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Lightweight backend decorators for Express",
   "exports": {
     ".": "./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Asad-Ali-Developer/Gonest.git"
   },
   "keywords": [
     "nesty",
@@ -23,20 +27,19 @@
   "scripts": {
     "watch": "tsc --watch",
     "build": "tsc && dts-bundle-generator --no-check -o dist/index.d.ts src/index.ts",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "dev": "ts-node-dev --clear --respawn --transpile-only --watch src src/index.ts"
+  },
+  "peerDependencies": {
+    "ts-node-dev": "^2.0.0"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^8.17.0",
-    "@supabase/supabase-js": "^2.48.1",
     "colorette": "^2.0.20",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dayjs": "^1.11.13",
     "express": "^4.21.2",
-    "firebase-admin": "^13.1.0",
-    "ioredis": "^5.5.0",
     "mongoose": "^8.10.0",
-    "pg": "^8.13.3",
     "prettier": "^3.5.0",
     "reflect-metadata": "^0.2.2",
     "sequelize": "^6.37.5",
@@ -48,8 +51,8 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.1",
-    "@types/pg": "^8.11.11",
     "dts-bundle-generator": "^9.5.1",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.3"
   }
 }

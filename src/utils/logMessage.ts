@@ -16,7 +16,7 @@ const logMessage = (
   const typeColors = {
     LOG: white,
     START: blue,
-    SUCCESS: blue,
+    SUCCESS: green,
     ROUTE: cyan,
     WARN: yellow,
     ERROR: red,
