@@ -1,6 +1,6 @@
 {
   "name": "gonest",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Lightweight backend decorators for Express",
@@ -12,22 +12,26 @@
     "url": "https://github.com/Asad-Ali-Developer/Gonest.git"
   },
   "keywords": [
-    "nesty",
+    "gonest",
     "backend",
     "express",
     "decorators",
     "lightweight"
   ],
-  "author": "Modest",
+  "author": "Gonest",
   "license": "MIT",
   "files": [
     "dist"
   ],
   "private": false,
+  "bin": {
+    "gonest-init": "src/scripts/add-dev-script.js"
+  },
   "scripts": {
     "watch": "tsc --watch",
     "build": "tsc && dts-bundle-generator --no-check -o dist/index.d.ts src/index.ts",
     "prepublishOnly": "npm run build",
+    "postinstall": "",
     "dev": "ts-node-dev --clear --respawn --transpile-only --watch src src/index.ts"
   },
   "peerDependencies": {
@@ -39,10 +43,8 @@
     "cors": "^2.8.5",
     "dayjs": "^1.11.13",
     "express": "^4.21.2",
-    "mongoose": "^8.10.0",
     "prettier": "^3.5.0",
     "reflect-metadata": "^0.2.2",
-    "sequelize": "^6.37.5",
     "socket.io": "^4.8.1",
     "tsc-watch": "^6.2.1"
   },
