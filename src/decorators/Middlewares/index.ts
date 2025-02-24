@@ -10,18 +10,26 @@ import { RouteDefinition } from "../../types";
  * @returns MethodDecorator for applying the middlewares to a specific method.
  */
 export function Middleware(
-  ...middlewares: Array<(req: Request, res: Response, next: NextFunction) => void>
+  ...middlewares: Array<
+    (req: Request, res: Response, next: NextFunction) => void
+  >
 ): MethodDecorator {
   return (target, propertyKey) => {
     // Retrieve existing metadata or initialize an empty array
-    const routes: RouteDefinition[] = Reflect.getMetadata("routes", target.constructor) || [];
+    const routes: RouteDefinition[] =
+      Reflect.getMetadata("routes", target.constructor) || [];
 
     // Find if the method already has a route definition
-    const existingRoute = routes.find(route => route.methodName === propertyKey);
+    const existingRoute = routes.find(
+      (route) => route.methodName === propertyKey
+    );
 
     if (existingRoute) {
       // Append middlewares to the existing route definition
-      existingRoute.middlewares = [...(existingRoute.middlewares || []), ...middlewares];
+      existingRoute.middlewares = [
+        ...(existingRoute.middlewares || []),
+        ...middlewares,
+      ];
     } else {
       // If no route is defined yet, create a new one WITHOUT setting requestMethod
       routes.push({

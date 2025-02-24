@@ -9,16 +9,25 @@ import { HttpMethod, RouteDefinition } from "../../types";
  */
 const createRouterDecorator = (method: HttpMethod) => {
   return (path: string): MethodDecorator => {
-    return (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
+    return (
+      target: any,
+      propertyKey: string | symbol,
+      descriptor: PropertyDescriptor
+    ) => {
       if (!descriptor || typeof descriptor.value !== "function") {
-        throw new Error(`@${method.toUpperCase()} can only be applied to methods.`);
+        throw new Error(
+          `@${method.toUpperCase()} can only be applied to methods.`
+        );
       }
 
       // Retrieve existing metadata or initialize an empty array
-      const routes: RouteDefinition[] = Reflect.getMetadata("routes", target.constructor) || [];
+      const routes: RouteDefinition[] =
+        Reflect.getMetadata("routes", target.constructor) || [];
 
       // Find existing route definition
-      const existingRoute = routes.find(route => route.methodName === propertyKey);
+      const existingRoute = routes.find(
+        (route) => route.methodName === propertyKey
+      );
 
       if (existingRoute) {
         // If the method is already in metadata (from @Middleware), update it
@@ -30,7 +39,7 @@ const createRouterDecorator = (method: HttpMethod) => {
           path,
           requestMethod: method,
           methodName: propertyKey as string,
-          middlewares: [],  // Middleware will be added by @Middleware
+          middlewares: [], // Middleware will be added by @Middleware
         });
       }
 
