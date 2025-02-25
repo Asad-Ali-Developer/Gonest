@@ -2,19 +2,6 @@ const moduleContentForTs = `
 import { GonestFactory } from "gonest";
 import { DemoController } from "./controllers/demo.controller";
 
-/**
- * Initializes and configures the Gonest application.
- * - Sets up global API prefix.
- * - Enables CORS, JSON parsing, and URL encoding.
- * - Defines a simple route.
- * - Lists all routes for debugging.
- * - Handles exceptions gracefully (Must be added last).
- *
- * Note: Ensure that Express is installed along with the \`gonest.js\` package,
- * as it is required for handling routes and middleware properly.
- *
- * @returns {object} The initialized Gonest application.
- */
 export function Invest() {
   // Define the application module with controllers and global prefix
   const appModule = {
@@ -58,23 +45,10 @@ export const app = Invest();
 `;
 
 const moduleContentForJs = `
-import { GonestFactory } from "gonest";
-import { DemoController } from "./controllers/demo.controller";
+const { GonestFactory, app } = require("gonest");
+const { DemoController } = require("./controllers/demo.controller.js");
 
-/**
- * Initializes and configures the Gonest application.
- * - Sets up global API prefix.
- * - Enables CORS, JSON parsing, and URL encoding.
- * - Defines a simple route.
- * - Lists all routes for debugging.
- * - Handles exceptions gracefully (Must be added last).
- *
- * Note: Ensure that Express is installed along with the \`gonest.js\` package,
- * as it is required for handling routes and middleware properly.
- *
- * @returns {object} The initialized Gonest application.
- */
-export function Invest() {
+function Invest() {
   // Define the application module with controllers and global prefix
   const appModule = {
     controllers: [DemoController],
@@ -113,7 +87,7 @@ export function Invest() {
 }
 
 // Export the application instance for use in other parts of the project
-export const app = Invest();
+module.exports.app = Invest();
 `;
 
 module.exports = {

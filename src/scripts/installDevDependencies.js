@@ -1,9 +1,14 @@
-const { execSync } = require("./utility-exports");
+const LogMessageJsForApplication = require("../utils/LogMessageJsForApplication.js");
+const { execSync } = require("./utility-exports.js");
+const { green } = require("colorette");
 
 const InstallDevDependencies = (isTypeScript) => {
   try {
     if (isTypeScript) {
-      console.log("Installing depedencies...");
+      
+      const depedencyInstallationMessage = green("Installing depedencies...");
+      console.log(depedencyInstallationMessage);
+
       execSync(
         "npm install express dotenv typescript && npm install -D ts-node-dev @types/typescript @types/node @types/express",
         {
@@ -15,9 +20,15 @@ const InstallDevDependencies = (isTypeScript) => {
         stdio: "inherit",
       });
     }
-    console.log("Dependencies installed successfully!");
+    LogMessageJsForApplication(
+      "Dependencies installed successfully!",
+      "SUCCESS"
+    );
   } catch (error) {
-    console.error(`Failed to install ts-node-dev: ${error.message}`);
+    LogMessageJsForApplication(
+      `Failed to install dependencies: ${error.message}`,
+      "ERROR"
+    );
   }
 };
 

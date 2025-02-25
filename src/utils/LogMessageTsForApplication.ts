@@ -4,13 +4,13 @@ import dayjs from "dayjs";
 import { app } from "../core"; // Assuming app is correctly initialized in your project
 
 // Custom logger function to mimic NestJS-style logs
-const logMessage = (
+const LogMessageTsForApplication = (
   message: string,
   type:
     | "LOG"
     | "START"
     | "SUCCESS"
-    | "ROUTE"
+    | "ROUTE" 
     | "WARN"
     | "ERROR"
     | "DATABASE" = "LOG",
@@ -52,4 +52,4 @@ const logMessage = (
   console.log(finalMessage);
 };
 
-export default logMessage;
+export default LogMessageTsForApplication;

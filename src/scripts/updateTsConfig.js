@@ -1,4 +1,5 @@
-const { fs, tsConfigPath } = require("./utility-exports");
+const LogMessageJsForApplication = require("../utils/LogMessageJsForApplication.js");
+const { fs, tsConfigPath } = require("./utility-exports.js");
 
 // Required compiler options
 const requiredOptions = {
@@ -24,7 +25,7 @@ const includeExcludeOptions = `
  */
 function updateTsConfig() {
   if (!fs.existsSync(tsConfigPath)) {
-    console.error("tsconfig.json not found.");
+    LogMessageJsForApplication("tsconfig.json not found.", "WARN");
     return;
   }
 
@@ -60,4 +61,4 @@ function updateTsConfig() {
   fs.writeFileSync(tsConfigPath, content, "utf-8");
 }
 
-module.exports = updateTsConfig;
+module.exports = { updateTsConfig };

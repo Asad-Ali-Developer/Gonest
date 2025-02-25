@@ -1,4 +1,5 @@
-const { execSync } = require("./utility-exports");
+const LogMessageJsForApplication = require("../utils/LogMessageJsForApplication.js");
+const { execSync } = require("./utility-exports.js");
 
 const InitializingFilesByCommands = (isTypeScript) => {
   if (isTypeScript) {
@@ -6,9 +7,12 @@ const InitializingFilesByCommands = (isTypeScript) => {
       execSync("npx tsc --init", {
         stdio: "inherit",
       });
-      console.log("Files Initialized successfully!");
+      LogMessageJsForApplication("Files Initialized successfully!", "START");
     } catch (error) {
-      console.log("Not initializing files ... ", error.message);
+      LogMessageJsForApplication(
+        `Not initializing files ... ${error.message}`,
+        "ERROR"
+      );
     }
   }
 };

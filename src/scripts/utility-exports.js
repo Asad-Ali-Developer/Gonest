@@ -12,11 +12,4 @@ const tsConfigPath = path.resolve(process.cwd(), "tsconfig.json");
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
 
 // Export the resolved paths and the TypeScript detection result
-module.exports = {
-  packageJsonPath,
-  tsConfigPath,
-  packageJson,
-  execSync,
-  path,
-  fs,
-};
+module.exports = { packageJsonPath, tsConfigPath, packageJson, execSync, path, fs };

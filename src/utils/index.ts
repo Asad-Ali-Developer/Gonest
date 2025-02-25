@@ -1,6 +1,12 @@
 // import { logConnectedDatabases } from "./autoDetectDB";
 import listAllRoutes from "./listRoutes";
 import { RegisterControllers } from "./registerController";
-import logMessage from "./logMessage";
+import LogMessageTsForApplication from "./LogMessageTsForApplication";
+import { LoggerMessage } from "./LoggerMessage";
 
-export { listAllRoutes, RegisterControllers, logMessage };
+export {
+  LoggerMessage,
+  listAllRoutes,
+  RegisterControllers,
+  LogMessageTsForApplication,
+};
