@@ -1,4 +1,4 @@
-const { fs, path } = require("./utility-exports");
+const { fs, path } = require("./utility-exports.js");
 const {
   moduleContentForJs,
   moduleContentForTs,
@@ -7,6 +7,7 @@ const {
   controllerContentForJs,
   controllerContentForTs,
 } = require("./contents/controllerContent.js");
+const LogMessageJsForApplication = require("../utils/LogMessageJsForApplication.js")
 
 /**
  * Creates `src/appModule.ts` or `src/appModule.js` in the correct project directory.
@@ -17,13 +18,13 @@ const createAppModule = (isTypeScript) => {
 
   if (!fs.existsSync(srcPath)) {
     fs.mkdirSync(srcPath, { recursive: true });
-    console.info("Created 'src/' root directory.");
+    LogMessageJsForApplication("Created'src/' root directory.", "SUCCESS");
   }
 
   const appModulePath = path.join(srcPath, `appModule${fileExtension}`);
 
   if (fs.existsSync(appModulePath)) {
-    console.warn(`⚠️ ${appModulePath} already exists.`);
+    LogMessageJsForApplication(`${appModulePath} already exists.`, "WARN");
     return;
   }
 
@@ -34,7 +35,10 @@ const createAppModule = (isTypeScript) => {
   try {
     fs.writeFileSync(appModulePath, moduleContentPrebuilt.trim(), "utf-8");
   } catch (error) {
-    console.error(`Failed to create appModule file: ${error.message}`);
+    LogMessageJsForApplication(
+      `Failed to create appModule file: ${error.message}`,
+      "ERROR"
+    );
   }
 };
 
@@ -57,7 +61,7 @@ const createDemoController = (isTypeScript) => {
   );
 
   if (fs.existsSync(controllerPath)) {
-    console.warn(`⚠️ ${controllerPath} already exists.`);
+    LogMessageJsForApplication(`${controllerPath} already exists.`, "WARN");
     return;
   }
 
@@ -68,7 +72,10 @@ const createDemoController = (isTypeScript) => {
   try {
     fs.writeFileSync(controllerPath, controllerContent.trim(), "utf-8");
   } catch (error) {
-    console.error(`Failed to create DemoController: ${error.message}`);
+    LogMessageJsForApplication(
+      `Failed to create DemoController file: ${error.message}`,
+      "ERROR"
+    );
   }
 };
 

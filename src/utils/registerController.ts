@@ -1,7 +1,7 @@
 import { Express, Request, Response, Router, NextFunction } from "express";
 import "reflect-metadata";
 import { ControllerClass, RouteDefinition, HttpMethod } from "../types";
-import logMessage from "../utils/logMessage";
+import LogMessageTsForApplication from "../utils/LogMessageTsForApplication";
 
 /**
  * Registers controllers and their routes within an Express application instance.
@@ -29,7 +29,7 @@ const RegisterControllers = (
     routes.forEach(({ path, requestMethod, methodName, middlewares }) => {
       // Ensure the requestMethod is valid
       if (!requestMethod || !isValidHttpMethod(requestMethod)) {
-        logMessage(`Invalid HTTP method for route: ${methodName}`, "ERROR");
+        LogMessageTsForApplication(`Invalid HTTP method for route: ${methodName}`, "ERROR");
         return;
       }
 
@@ -48,7 +48,7 @@ const RegisterControllers = (
               controllerInstance[methodName].bind(controllerInstance);
             await boundHandler(req, res, next);
           } catch (error) {
-            logMessage(`Error in route handler for ${fullPath}:`, "ERROR");
+            LogMessageTsForApplication(`Error in route handler for ${fullPath}:`, "ERROR");
             next(error);
           }
         }

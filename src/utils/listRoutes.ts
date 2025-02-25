@@ -1,5 +1,5 @@
 import { Express } from "express";
-import logMessage from "./logMessage";
+import LogMessageTsForApplication from "./LogMessageTsForApplication";
 
 const listAllRoutes = (app: Express): void => {
   if (!app._router) {
@@ -39,7 +39,7 @@ const listAllRoutes = (app: Express): void => {
 
   // Log all routes
   routes.forEach((route) =>
-    logMessage(
+    LogMessageTsForApplication(
       `[RouterExplorer] Mapped {${route.path}, ${route.method}} route`,
       "ROUTE"
     )

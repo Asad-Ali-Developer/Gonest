@@ -9,14 +9,13 @@ import express, {
 import { Server as HttpServer, createServer } from "http";
 import { Socket, Server as SocketIOServer } from "socket.io";
 import { listAllRoutes } from "../utils";
-import { logMessage } from "../utils";
+import { LogMessageTsForApplication } from "../utils";
 import { exceptionHandler } from "../middlewares";
 
 class CoreGonestApplication {
   public app: Express;
   private appName: string = "";
   private appPort: number = 0;
-  private apiGlobalPrefix: string = "";
   private httpServer: HttpServer | null = null;
   private io: SocketIOServer | null = null;
   public use;
@@ -76,7 +75,7 @@ class CoreGonestApplication {
   public listen(port: number, cb?: () => void): void {
     this.appPort = port;
     this.app.listen(port, () => {
-      logMessage(
+      LogMessageTsForApplication(
         `[${this.appName || "GonestApp"}] Server started on port ${port}`,
         "LOG",
       );
@@ -90,7 +89,7 @@ class CoreGonestApplication {
    */
   public setApplicationName(name: string): void {
     this.appName = name;
-    logMessage(`[${this.appName}] Application successfully started`, "START");
+    LogMessageTsForApplication(`[${this.appName}] Application successfully started`, "START");
   }
 
   /**
@@ -105,7 +104,7 @@ class CoreGonestApplication {
    */
   public listAllRoutes(): void {
     if (!this.app._router) {
-      logMessage("No routes registered", "ROUTE");
+      LogMessageTsForApplication("No routes registered", "ROUTE");
       return;
     }
     listAllRoutes(this.app);
@@ -204,7 +203,7 @@ class CoreGonestApplication {
       this.io = new SocketIOServer<T>(server, { cors: corsOptions });
 
       this.io.on("connection", (clientSocket: Socket<T>) => {
-        logMessage(`🔌 Client connected: ${clientSocket.id}`, "SUCCESS");
+        LogMessageTsForApplication(`🔌 Client connected: ${clientSocket.id}`, "SUCCESS");
 
         // Register event handlers if provided
         if (eventHandlers) {
@@ -216,7 +215,7 @@ class CoreGonestApplication {
         });
       });
 
-      logMessage("✅ WebSocket server initialized", "SUCCESS");
+      LogMessageTsForApplication("✅ WebSocket server initialized", "SUCCESS");
     }
 
     return this.io;

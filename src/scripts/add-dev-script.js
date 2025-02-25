@@ -1,13 +1,12 @@
 #!/usr/bin/env node
+
 const readline = require("readline");
-const { fs, packageJsonPath } = require("./utility-exports");
-const updateTsConfig = require("./updateTsConfig.js");
-const {
-  createAppModule,
-  createDemoController,
-} = require("./appModule.script.js");
+const { packageJsonPath, fs } = require("./utility-exports.js");
+const { updateTsConfig } = require("./updateTsConfig.js");
+const { createAppModule, createDemoController } = require("./appModule.script.js");
 const { InstallDevDependencies } = require("./installDevDependencies.js");
-const { InitializingFilesByCommands } = require("./intializingFiles");
+const { InitializingFilesByCommands } = require("./intializingFiles.js");
+const LogMessageJsForApplication = require("../utils/LogMessageJsForApplication.js");
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -29,18 +28,25 @@ rl.question(
 
 function initializeProject(isTypeScript) {
   console.log(`You selected: ${isTypeScript ? "TypeScript" : "JavaScript"}\n`);
+  LogMessageJsForApplication(
+    `You selected: ${isTypeScript ? "TypeScript" : "JavaScript"}\n`,
+    "START"
+  );
 
   // Scripts for development
   const devScript = isTypeScript
     ? "ts-node-dev --clear --respawn --transpile-only --watch src src/appModule.ts"
-    : 'nodemon --exec "cls && node index.js" --watch .';
+    : 'nodemon --exec \"cls && node src/appModule.js\" --watch .';
 
   /**
    * Updates `package.json` by adding required scripts.
    */
   function updatePackageJson() {
     if (!fs.existsSync(packageJsonPath)) {
-      console.error("package.json not found. Run 'npm init -y' first.");
+      LogMessageJsForApplication(
+        "package.json not found. Run 'npm init -y' first.",
+        "ERROR"
+      );
       return;
     }
 
@@ -53,12 +59,18 @@ function initializeProject(isTypeScript) {
       packageJson.scripts.start = "node dist/index.js";
     }
 
-    console.log("Gonest application has been successfully initialized!");
+    LogMessageJsForApplication(
+      "Gonest application has been successfully initialized!",
+      "SUCCESS"
+    );
 
     try {
       fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
     } catch (error) {
-      console.error(`Failed to update package.json: ${error.message}`);
+      LogMessageJsForApplication(
+        `Failed to update package.json: ${error.message}`,
+        "ERROR"
+      );
     }
   }
 

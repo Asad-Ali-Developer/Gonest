@@ -16,7 +16,7 @@ export class DemoController {
 `;
 
 const controllerContentForJs = `
-import { Controller, Get } from "gonest";
+const { Controller, Get } = require("gonest");
 
 @Controller("demo") // Base route: /api/v1/demo
 export class DemoController {
