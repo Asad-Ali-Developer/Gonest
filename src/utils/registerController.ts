@@ -10,47 +10,54 @@ import logMessage from "../utils/logMessage";
  * @param apiGlobalPrefix A global prefix for all API routes (e.g., "api/v1").
  * @param controllers An array of controller classes to be registered.
  */
-const RegisterControllers = (appInstance: Express, apiGlobalPrefix: string, controllers: ControllerClass[]): void => {
-    controllers.forEach((ControllerClass) => {
-        const controllerInstance = new ControllerClass();
-        const routePrefix: string = Reflect.getMetadata("prefix", ControllerClass) || "";
-        const routes: RouteDefinition[] = Reflect.getMetadata("routes", ControllerClass) || [];
+const RegisterControllers = (
+  appInstance: Express,
+  apiGlobalPrefix: string,
+  controllers: ControllerClass[]
+): void => {
+  controllers.forEach((ControllerClass) => {
+    const controllerInstance = new ControllerClass();
+    const routePrefix: string =
+      Reflect.getMetadata("prefix", ControllerClass) || "";
+    const routes: RouteDefinition[] =
+      Reflect.getMetadata("routes", ControllerClass) || [];
 
-        const controllerPath = `/${apiGlobalPrefix}/${routePrefix}`;
+    const controllerPath = `/${apiGlobalPrefix}/${routePrefix}`;
 
-        const router = Router();
+    const router = Router();
 
-        routes.forEach(({ path, requestMethod, methodName, middlewares }) => {
-            // Ensure the requestMethod is valid
-            if (!requestMethod || !isValidHttpMethod(requestMethod)) {
-                logMessage(`Invalid HTTP method for route: ${methodName}`, "ERROR");
-                return;
-            }
+    routes.forEach(({ path, requestMethod, methodName, middlewares }) => {
+      // Ensure the requestMethod is valid
+      if (!requestMethod || !isValidHttpMethod(requestMethod)) {
+        logMessage(`Invalid HTTP method for route: ${methodName}`, "ERROR");
+        return;
+      }
 
-            const appliedMiddlewares = middlewares && middlewares.length > 0 ? middlewares : [];
-            const fullPath = `${controllerPath}/${path}`;
+      const appliedMiddlewares =
+        middlewares && middlewares.length > 0 ? middlewares : [];
+      const fullPath = `${controllerPath}/${path}`;
 
-            // logMessage(`Registering route: ${requestMethod.toUpperCase()!} ${fullPath}`, "ROUTE");
+      // logMessage(`Registering route: ${requestMethod.toUpperCase()!} ${fullPath}`, "ROUTE");
 
-            router[requestMethod as HttpMethod](
-                path,
-                ...appliedMiddlewares, // Apply middleware functions
-                async (req: Request, res: Response, next: NextFunction) => {
-                    try {
-                        const boundHandler = controllerInstance[methodName].bind(controllerInstance);
-                        await boundHandler(req, res, next);
-                    } catch (error) {
-                        logMessage(`Error in route handler for ${fullPath}:`, "ERROR");
-                        next(error);
-                    }
-                }
-            );
-        });
-
-        appInstance.use(controllerPath, router);
+      router[requestMethod as HttpMethod](
+        path,
+        ...appliedMiddlewares, // Apply middleware functions
+        async (req: Request, res: Response, next: NextFunction) => {
+          try {
+            const boundHandler =
+              controllerInstance[methodName].bind(controllerInstance);
+            await boundHandler(req, res, next);
+          } catch (error) {
+            logMessage(`Error in route handler for ${fullPath}:`, "ERROR");
+            next(error);
+          }
+        }
+      );
     });
-};
 
+    appInstance.use(controllerPath, router);
+  });
+};
 
 /**
  * Helper function to check if a method is a valid HTTP method.
@@ -59,7 +66,9 @@ const RegisterControllers = (appInstance: Express, apiGlobalPrefix: string, cont
  * @returns `true` if the method is valid, `false` otherwise.
  */
 const isValidHttpMethod = (method: any): method is HttpMethod => {
-    return ["get", "post", "put", "delete", "patch", "options", "head"].includes(method);
+  return ["get", "post", "put", "delete", "patch", "options", "head"].includes(
+    method
+  );
 };
 
 export { RegisterControllers };

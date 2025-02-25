@@ -6,8 +6,14 @@ import { app } from "../core"; // Assuming app is correctly initialized in your 
 // Custom logger function to mimic NestJS-style logs
 const logMessage = (
   message: string,
-  type: "LOG" | "START" | "SUCCESS" | "ROUTE" | "WARN" | "ERROR" | "DATABASE" = "LOG",
-  port?: number
+  type:
+    | "LOG"
+    | "START"
+    | "SUCCESS"
+    | "ROUTE"
+    | "WARN"
+    | "ERROR"
+    | "DATABASE" = "LOG",
 ) => {
   const timestamp = dayjs().format("MM/DD/YYYY, hh:mm:ss A");
   const pid = process.pid; // Process ID for the application
@@ -39,7 +45,6 @@ const logMessage = (
     .replace(/(Mapped \{.*?\} route)/g, (match) => green(match)) // Route mappings in green
     .replace(/(Error:.*)/g, (match) => red(match)) // Errors in red
     .replace(/(MongoDB|PostgreSQL|MySQL)/g, (match) => yellow(match)) // Highlight database names in cyan
-    .replace(/(`${port}`)/g, (match) => cyan(match)); // Highlight "port" occurrences in cyan
 
   // Final log message with port information if applicable
   const finalMessage = `${formattedPrefix} - ${formattedTimestamp} ${formattedType} ${formattedMessage}`;
