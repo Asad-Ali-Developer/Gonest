@@ -1,12 +1,14 @@
 #!/usr/bin/env node
-
+const fs = require('fs');
+const path = require('path');
 const readline = require("readline");
-const { packageJsonPath, fs } = require("./utility-exports.js");
 const { updateTsConfig } = require("./updateTsConfig.js");
 const { createAppModule, createDemoController } = require("./appModule.script.js");
 const { InstallDevDependencies } = require("./installDevDependencies.js");
 const { InitializingFilesByCommands } = require("./intializingFiles.js");
 const LogMessageJsForApplication = require("../utils/LogMessageJsForApplication.js");
+
+const packageJsonPath = path.resolve(process.cwd(), "package.json");
 
 const rl = readline.createInterface({
   input: process.stdin,

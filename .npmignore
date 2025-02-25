@@ -1,5 +1,19 @@
+# Ignore node_modules (should never be published)
 node_modules
-src
+
+# Ignore any local environment or build files
+*.log
+*.env
+*.map
+
+# Ignore Git folder
 .git
-.gitignore
-test.ts
+
+# Ignore test files (if they exist outside your build)
+test
+*.test.ts
+*.spec.ts
+
+# If you're publishing your compiled output, you generally don't need to include source code
+# unless you specifically want to ship it. Since you're including src/ in "files", you might remove or comment out:
+# src
