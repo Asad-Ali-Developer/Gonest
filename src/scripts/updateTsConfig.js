@@ -1,13 +1,12 @@
-const fs = require("fs");
-const path = require("path");
-
-const tsConfigPath = path.resolve(process.cwd(), "tsconfig.json");
+const { fs, tsConfigPath } = require("./utility-exports");
 
 // Required compiler options
 const requiredOptions = {
   experimentalDecorators: true,
   emitDecoratorMetadata: true,
   strictFunctionTypes: false,
+  outDir: "./dist",
+  rootDir: "src",
 };
 
 // Include and exclude options to be added at the end
