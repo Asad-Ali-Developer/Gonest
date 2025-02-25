@@ -1,5 +1,5 @@
 const LogMessageJsForApplication = require("../utils/LogMessageJsForApplication.js");
-const { execSync } = require("./utility-exports.js");
+const { execSync } = require("child_process");
 
 const InitializingFilesByCommands = (isTypeScript) => {
   if (isTypeScript) {

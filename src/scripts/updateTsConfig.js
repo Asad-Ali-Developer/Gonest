@@ -1,5 +1,8 @@
+const fs = require('fs');
+const path = require('path');
 const LogMessageJsForApplication = require("../utils/LogMessageJsForApplication.js");
-const { fs, tsConfigPath } = require("./utility-exports.js");
+
+const tsConfigPath = path.resolve(process.cwd(), "tsconfig.json");
 
 // Required compiler options
 const requiredOptions = {

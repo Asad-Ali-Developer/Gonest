@@ -1,4 +1,5 @@
-const { fs, path } = require("./utility-exports.js");
+const fs = require('fs');
+const path = require('path');
 const {
   moduleContentForJs,
   moduleContentForTs,

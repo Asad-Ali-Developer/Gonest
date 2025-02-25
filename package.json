@@ -1,6 +1,6 @@
 {
   "name": "gonest",
-  "version": "1.0.22",
+  "version": "1.0.24",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Lightweight backend decorators for Express",
@@ -21,7 +21,17 @@
   "author": "Gonest",
   "license": "MIT",
   "files": [
-    "dist"
+    "dist",
+    "src/scripts",
+    "src/utils",
+    "src/types",
+    "src/core",
+    "src/decorators",
+    "src/middlewares",
+    "src/types",
+    "src/index.ts",
+    "README.md",
+    "LICENSE"
   ],
   "private": false,
   "bin": {
@@ -30,12 +40,7 @@
   "scripts": {
     "watch": "tsc --watch",
     "build": "tsc && dts-bundle-generator --no-check -o dist/index.d.ts src/index.ts",
-    "prepublishOnly": "npm run build",
-    "postinstall": "",
-    "dev": "ts-node-dev --clear --respawn --transpile-only --watch src src/index.ts"
-  },
-  "peerDependencies": {
-    "ts-node-dev": "^2.0.0"
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "colorette": "^2.0.20",
@@ -54,7 +59,6 @@
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.1",
     "dts-bundle-generator": "^9.5.1",
-    "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.3"
   }
 }
