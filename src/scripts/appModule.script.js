@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 const {
   moduleContentForJs,
   moduleContentForTs,
@@ -8,10 +8,14 @@ const {
   controllerContentForJs,
   controllerContentForTs,
 } = require("./contents/controllerContent.js");
-const LogMessageJsForApplication = require("../utils/LogMessageJsForApplication.js")
+const LogMessageJsForApplication = require("../utils/LogMessageJsForApplication.js");
+const {
+  serviceContentForJs,
+  serviceContentForTs,
+} = require("./contents/serviceContent.js");
 
 /**
- * Creates `src/appModule.ts` or `src/appModule.js` in the correct project directory.
+ * Creates `src/appModule.module.ts` or `src/appModule.module.js` in the correct project directory.
  */
 const createAppModule = (isTypeScript) => {
   const fileExtension = isTypeScript ? ".ts" : ".js";
@@ -22,7 +26,7 @@ const createAppModule = (isTypeScript) => {
     LogMessageJsForApplication("Created'src/' root directory.", "SUCCESS");
   }
 
-  const appModulePath = path.join(srcPath, `appModule${fileExtension}`);
+  const appModulePath = path.join(srcPath, `appModule.module${fileExtension}`);
 
   if (fs.existsSync(appModulePath)) {
     LogMessageJsForApplication(`${appModulePath} already exists.`, "WARN");
@@ -80,4 +84,38 @@ const createDemoController = (isTypeScript) => {
   }
 };
 
-module.exports = { createAppModule, createDemoController };
+/**
+ * Creates `src/services/demo.service.ts` or `src/services/demo.service.js`.
+ */
+const createDemoService = (isTypeScript) => {
+  const fileExtension = isTypeScript ? ".ts" : ".js";
+  const srcPath = path.resolve(process.cwd(), "src");
+
+  const servicesPath = path.join(srcPath, "services");
+
+  if (!fs.existsSync(servicesPath)) {
+    fs.mkdirSync(servicesPath, { recursive: true });
+  }
+
+  const servicePath = path.join(servicesPath, `demo.service${fileExtension}`);
+
+  if (fs.existsSync(servicePath)) {
+    LogMessageJsForApplication(`${servicePath} already exists.`, "WARN");
+    return;
+  }
+
+  const serviceContent = isTypeScript
+    ? serviceContentForTs
+    : serviceContentForJs;
+
+  try {
+    fs.writeFileSync(servicePath, serviceContent.trim(), "");
+  } catch (error) {
+    LogMessageJsForApplication(
+      `Failed to create DemoService file: ${error.message}`,
+      "ERROR"
+    );
+  }
+};
+
+module.exports = { createAppModule, createDemoController, createDemoService };
