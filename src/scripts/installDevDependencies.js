@@ -4,11 +4,10 @@ const { green } = require("colorette");
 
 const InstallDevDependencies = (isTypeScript) => {
   try {
-    if (isTypeScript) {
-      
-      const depedencyInstallationMessage = green("Installing depedencies...");
-      console.log(depedencyInstallationMessage);
+    const depedencyInstallationMessage = green("Installing depedencies...");
+    console.log(depedencyInstallationMessage);
 
+    if (isTypeScript) {
       execSync(
         "npm install express dotenv typescript && npm install -D ts-node-dev @types/typescript @types/node @types/express",
         {

@@ -1,9 +1,13 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 const readline = require("readline");
 const { updateTsConfig } = require("./updateTsConfig.js");
-const { createAppModule, createDemoController } = require("./appModule.script.js");
+const {
+  createAppModule,
+  createDemoController,
+  createDemoService,
+} = require("./appModule.script.js");
 const { InstallDevDependencies } = require("./installDevDependencies.js");
 const { InitializingFilesByCommands } = require("./intializingFiles.js");
 const LogMessageJsForApplication = require("../utils/LogMessageJsForApplication.js");
@@ -37,8 +41,8 @@ function initializeProject(isTypeScript) {
 
   // Scripts for development
   const devScript = isTypeScript
-    ? "ts-node-dev --clear --respawn --transpile-only --watch src src/appModule.ts"
-    : 'nodemon --exec \"cls && node src/appModule.js\" --watch .';
+    ? "ts-node-dev --clear --respawn --transpile-only --watch src src/appModule.module.ts"
+    : 'nodemon --exec \"cls && node src/appModule.module.js\" --watch .';
 
   /**
    * Updates `package.json` by adding required scripts.
@@ -82,5 +86,6 @@ function initializeProject(isTypeScript) {
   InitializingFilesByCommands(isTypeScript);
   createAppModule(isTypeScript);
   createDemoController(isTypeScript);
+  createDemoService(isTypeScript);
   if (isTypeScript) updateTsConfig();
 }
