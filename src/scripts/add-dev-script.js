@@ -26,14 +26,21 @@ const rl = readline.createInterface({
 rl.question(
   "Will you make your project in (ts) TypeScript or (js) JavaScript?\n",
   (answer) => {
-    const isTypeScript = answer.trim().toLowerCase() === "ts";
+    const choice = answer.trim().toLowerCase();
+
+    if (choice !== "ts" && choice !== "js") {
+      console.error("Invalid selection. Please choose either 'ts' or 'js'.\n");
+      rl.close();
+      return;
+    }
+
+    const isTypeScript = choice === "ts";
     initializeProject(isTypeScript);
     rl.close();
   }
 );
 
 function initializeProject(isTypeScript) {
-  console.log(`You selected: ${isTypeScript ? "TypeScript" : "JavaScript"}\n`);
   LogMessageJsForApplication(
     `You selected: ${isTypeScript ? "TypeScript" : "JavaScript"}\n`,
     "START"
