@@ -14,16 +14,19 @@ const {
   serviceContentForTs,
 } = require("./contents/serviceContent.js");
 
+
+// Source Path of "src" folder.
+const srcPath = path.resolve(process.cwd(), "src");
+
 /**
  * Creates `src/appModule.module.ts` or `src/appModule.module.js` in the correct project directory.
  */
 const createAppModule = (isTypeScript) => {
   const fileExtension = isTypeScript ? ".ts" : ".js";
-  const srcPath = path.resolve(process.cwd(), "src");
 
   if (!fs.existsSync(srcPath)) {
     fs.mkdirSync(srcPath, { recursive: true });
-    LogMessageJsForApplication("Created'src/' root directory.", "SUCCESS");
+    LogMessageJsForApplication("Created 'src' root directory.", "SUCCESS");
   }
 
   const appModulePath = path.join(srcPath, `appModule.module${fileExtension}`);
@@ -52,7 +55,6 @@ const createAppModule = (isTypeScript) => {
  */
 const createDemoController = (isTypeScript) => {
   const fileExtension = isTypeScript ? ".ts" : ".js";
-  const srcPath = path.resolve(process.cwd(), "src");
 
   const controllersPath = path.join(srcPath, "controllers");
 
@@ -89,7 +91,6 @@ const createDemoController = (isTypeScript) => {
  */
 const createDemoService = (isTypeScript) => {
   const fileExtension = isTypeScript ? ".ts" : ".js";
-  const srcPath = path.resolve(process.cwd(), "src");
 
   const servicesPath = path.join(srcPath, "services");
 
