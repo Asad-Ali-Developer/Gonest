@@ -22,7 +22,7 @@ class GonestFactory {
    *
    * @param appModule Optional configuration object containing controllers and a global prefix.
    * @param appModule.controllers An array of controller classes to register.
-   * @param appModule.globalPrefix A string representing the global API prefix.
+   * @param appModule.globalPrefix A string representing the global API prefix (Optional).
    * @returns The singleton instance of `CoreGonestApplication`.
    */
   public static create(appModule?: {
@@ -38,7 +38,7 @@ class GonestFactory {
       const { RegisterControllers } = require("../utils/registerController");
       RegisterControllers(
         GonestFactory.instance.app,
-        appModule.globalPrefix,
+        appModule?.globalPrefix,
         appModule.controllers
       );
     }
