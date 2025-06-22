@@ -170,29 +170,6 @@ class ProductController {
 
 ---
 
-### 4️⃣ WebSocket Integration
-
-Gonest supports WebSocket integration using `Socket.IO`:
-
-```typescript
-import { GonestFactory } from "gonest";
-
-const app = GonestFactory.create();
-
-app.connectSocket({ origin: "https://example.com" }, (socket) => {
-  socket.on("message", (data) => {
-    console.log("Received message:", data);
-    socket.emit("response", "Message received");
-  });
-});
-
-app.listen(8080, () => {
-  console.log("Server is running on port 8080");
-});
-```
-
----
-
 ## 🚀 Features
 
 - **Decorator-based routing:** Use `@Controller`, `@Get`, `@Post`, etc. for cleaner route definitions.

@@ -7,7 +7,6 @@ import express, {
   urlencoded,
 } from "express";
 import { Server as HttpServer, createServer } from "http";
-import { Socket, Server as SocketIOServer } from "socket.io";
 import { listAllRoutes } from "../utils";
 import { LogMessageTsForApplication } from "../utils";
 import { exceptionHandler } from "../middlewares";
@@ -17,7 +16,6 @@ class CoreGonestApplication {
   private appName: string = "";
   private appPort: number = 0;
   private httpServer: HttpServer | null = null;
-  private io: SocketIOServer | null = null;
   public use;
   public get;
   public post;
@@ -75,10 +73,12 @@ class CoreGonestApplication {
   public listen(port: number, cb?: () => void): void {
     this.appPort = port;
     this.app.listen(port, () => {
-      LogMessageTsForApplication(
-        `[${this.appName || "GonestApp"}] Server started on port ${port}`,
-        "LOG",
-      );
+      if (!cb) {
+        LogMessageTsForApplication(
+          `[${this.appName || "GonestApp"}] Server started on port ${port}`,
+          "LOG"
+        );
+      }
       if (cb) cb();
     });
   }
@@ -89,7 +89,10 @@ class CoreGonestApplication {
    */
   public setApplicationName(name: string): void {
     this.appName = name;
-    LogMessageTsForApplication(`[${this.appName}] Application successfully started`, "START");
+    LogMessageTsForApplication(
+      `[${this.appName || "Gonest"}] Application successfully started`,
+      "START"
+    );
   }
 
   /**
@@ -186,39 +189,6 @@ class CoreGonestApplication {
       this.httpServer = createServer(this.app);
     }
     return this.httpServer;
-  }
-
-  /**
-   * Initializes a WebSocket server and attaches it to the HTTP server.
-   * @param corsOptions CORS configuration for the WebSocket server.
-   * @param eventHandlers Optional function to handle WebSocket events.
-   */
-  public connectSocket<T extends Record<string, (...args: any[]) => void>>(
-    corsOptions: CorsOptions,
-    eventHandlers?: (socket: Socket<T>) => void
-  ): SocketIOServer {
-    const server: HttpServer = this.getHttpServer(); // Ensure we get the Express HTTP server
-
-    if (!this.io) {
-      this.io = new SocketIOServer<T>(server, { cors: corsOptions });
-
-      this.io.on("connection", (clientSocket: Socket<T>) => {
-        LogMessageTsForApplication(`🔌 Client connected: ${clientSocket.id}`, "SUCCESS");
-
-        // Register event handlers if provided
-        if (eventHandlers) {
-          eventHandlers(clientSocket);
-        }
-
-        clientSocket.on("disconnect", () => {
-          console.log(`❌ Client disconnected: ${clientSocket.id}`);
-        });
-      });
-
-      LogMessageTsForApplication("✅ WebSocket server initialized", "SUCCESS");
-    }
-
-    return this.io;
   }
 
   public getUrl(): string {

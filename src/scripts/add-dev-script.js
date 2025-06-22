@@ -69,7 +69,7 @@ function initializeProject(isTypeScript) {
 
     if (isTypeScript) {
       packageJson.scripts.build = "npx tsc";
-      packageJson.scripts.start = "node dist/index.js";
+      packageJson.scripts.start = "node dist/appModule.module.js";
     }
 
     LogMessageJsForApplication(
