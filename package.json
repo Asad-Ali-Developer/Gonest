@@ -1,6 +1,6 @@
 {
   "name": "gonest",
-  "version": "1.0.26",
+  "version": "1.0.28",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Lightweight backend decorators for Express",

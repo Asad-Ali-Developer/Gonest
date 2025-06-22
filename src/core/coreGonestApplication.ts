@@ -73,10 +73,12 @@ class CoreGonestApplication {
   public listen(port: number, cb?: () => void): void {
     this.appPort = port;
     this.app.listen(port, () => {
-      LogMessageTsForApplication(
-        `[${this.appName || "GonestApp"}] Server started on port ${port}`,
-        "LOG",
-      );
+      if (!cb) {
+        LogMessageTsForApplication(
+          `[${this.appName || "GonestApp"}] Server started on port ${port}`,
+          "LOG"
+        );
+      }
       if (cb) cb();
     });
   }
@@ -87,7 +89,10 @@ class CoreGonestApplication {
    */
   public setApplicationName(name: string): void {
     this.appName = name;
-    LogMessageTsForApplication(`[${this.appName}] Application successfully started`, "START");
+    LogMessageTsForApplication(
+      `[${this.appName || "Gonest"}] Application successfully started`,
+      "START"
+    );
   }
 
   /**
@@ -185,7 +190,6 @@ class CoreGonestApplication {
     }
     return this.httpServer;
   }
-
 
   public getUrl(): string {
     if (!this.appPort) {
